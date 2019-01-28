@@ -1,6 +1,6 @@
 {
   "name": "react-native-draggable-animation-list",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React native draggable animation list",
   "main": "DragAndDropAnimation.js",
   "author": "Nhuan Hoang Duc",
@@ -30,5 +30,15 @@
   },
   "bugs": {
     "url": "https://github.com/nhuanhoangduc/react-native-draggable-animation-list/issues"
-  }
+  },
+  "keywords": [
+    "react-native",
+    "sortable",
+    "draggable",
+    "animation",
+    "drag",
+    "drop",
+    "sort",
+    "list"
+  ]
 }
