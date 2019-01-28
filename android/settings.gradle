@@ -1,0 +1,3 @@
+rootProject.name = 'drag_and_drop'
+
+include ':app'
