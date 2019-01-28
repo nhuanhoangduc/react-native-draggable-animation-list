@@ -1,9 +1,9 @@
 {
   "name": "react-native-draggable-animation-list",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "author": "",
+  "description": "React native draggable animation list",
+  "main": "DragAndDropAnimation.js",
+  "author": "Nhuan Hoang Duc",
   "license": "ISC",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
