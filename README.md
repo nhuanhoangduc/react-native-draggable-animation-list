@@ -3,7 +3,7 @@
 ```javascript
 import  React, { Component } from  'react';
 import { StyleSheet, Text, View, TouchableOpacity } from  'react-native';
-import  DragAndDropAnimation  from  './DragAndDropAnimation';
+import DragAndDropAnimation from 'react-native-draggable-animation-list';
   
   
 export  default  class  App  extends  Component {
