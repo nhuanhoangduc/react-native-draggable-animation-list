@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
 class DraggableItem extends PureComponent {
     
     blockGesture = false
-    componentPositionY = 0
     componentHeight = 0
+    offsetY = 0
     animatedPositionYValue = new Animated.Value(0)
 
     state = {
@@ -34,31 +34,48 @@ class DraggableItem extends PureComponent {
         this.caculateCurrentActiveIndex = this.caculateCurrentActiveIndex.bind(this);
 
         this._panResponder = PanResponder.create({
-            // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
             onMoveShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-    
-            onPanResponderGrant: async (event) => {
+            // onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onPanResponderGrant: async ({ nativeEvent }, gestureState) => {
+                this.offsetY = nativeEvent.locationY;
                 this.props.onItemPressed(this.componentHeight);
             },
-            onPanResponderMove: async (event, gestureState) => {
+            onPanResponderMove: async ({ nativeEvent }, gestureState) => {
+                const { containerHeight, containerPositionY, activeItemIndex } = this.props;
+                const { pageY } = nativeEvent;
                 const { moveY, y0 } = gestureState;
-
                 const offsetY = moveY - y0;
-                const currentActiveIndex = this.caculateCurrentActiveIndex(offsetY);
-
-                this.animatedPositionYValue.setValue(offsetY);
-                this.props.onActiveItemNextIndexChanged(currentActiveIndex);
+                
+                if (activeItemIndex < 0) {
+                    this.props.onActiveItemReleased();
+                    return;
+                }
+                
+                if (
+                    (offsetY < 0) &&
+                    ((pageY - containerPositionY) > this.offsetY)
+                ) {
+                    this.animatedPositionYValue.setValue(offsetY);
+                    const currentActiveIndex = this.caculateCurrentActiveIndex(offsetY);
+                    this.props.onActiveItemNextIndexChanged(currentActiveIndex);
+                } else if (
+                    (offsetY > 0) &&
+                    (((containerHeight + containerPositionY) - pageY) > (this.componentHeight - this.offsetY))
+                ) {
+                    this.animatedPositionYValue.setValue(offsetY);
+                    const currentActiveIndex = this.caculateCurrentActiveIndex(offsetY);
+                    this.props.onActiveItemNextIndexChanged(currentActiveIndex);
+                }
             },
-            onPanResponderTerminationRequest: (event, gestureState) => true,
             onPanResponderRelease: (event, gestureState) => {
-                const { index, activeItemNextIndex } = this.props;
+                const { index, activeItemIndex, activeItemNextIndex } = this.props;
                 const nextPositionY = (activeItemNextIndex - index) * this.componentHeight;
 
-                console.log(activeItemNextIndex, index);
-
+                if (activeItemIndex < 0) {
+                    this.props.onActiveItemReleased();
+                    return;
+                }
 
                 if (this.animatedPositionYValue._value === 0) {
                     this.props.onActiveItemReleased();
@@ -75,14 +92,17 @@ class DraggableItem extends PureComponent {
                     });
                 }
             },
+            onPanResponderTerminationRequest: (evt, gestureState) => true,
+            onPanResponderTerminate: (evt, gestureState) => {
+                this.props.onActiveItemReleased();
+            },
             onShouldBlockNativeResponder: (evt, gestureState) => {
-              return true;
+                return false;
             },
         });
     }
     
     componentWillReceiveProps(nextProps) {
-        const isActive = (this.props.index === this.props.activeItemIndex);
         const isNextActive = (nextProps.index === nextProps.activeItemIndex);
 
         if (this.props.activeItemIndex >= 0 && nextProps.activeItemIndex < 0) {
@@ -186,7 +206,6 @@ class DraggableItem extends PureComponent {
         }
 
         this.componentRef._component.measure((a, b, width, height, px, py) => {
-            this.componentPositionY = py;
             this.componentHeight = height;
         });
     }
@@ -236,7 +255,7 @@ class DraggableItem extends PureComponent {
             inputRange: [-10000, 0, 10000],
             outputRange: [-10000, 0, 10000],
         });
-
+        console.log(children)
 
         return (
             <Animated.View

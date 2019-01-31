@@ -25,9 +25,14 @@ export  default  class  App  extends  Component {
 							orderList: [...newOrderList],
 						});
 					}}
-					activeItemBackgroundColor="red"
-					data={  data  }
-					renderItem={(itemKey) => {
+					onDraggableItemStart={(itemIndex) => {
+
+            		}}
+					onDraggableItemRelease={(itemNextIndex) => {
+
+					}}
+					delayLongPress={ 200 } // Start dragging after x milliseconds
+					renderItem={(itemKey, itemIndex) => {
 						return (
 							<Text>
 								{  data[itemKey] }
