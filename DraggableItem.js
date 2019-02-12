@@ -255,7 +255,6 @@ class DraggableItem extends PureComponent {
             inputRange: [-10000, 0, 10000],
             outputRange: [-10000, 0, 10000],
         });
-        console.log(children)
 
         return (
             <Animated.View

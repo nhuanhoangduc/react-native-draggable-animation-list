@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, ScrollView, PanResponder } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import _ from 'lodash';
 
 import DraggableItem from './DraggableItem';
@@ -33,9 +33,16 @@ class DragAndDropAnimation extends PureComponent {
         }
 
         this.containerRef.measure((a, b, width, height, px, py) => {
+            let containerHeight = height;
+
             this.setState({
-                containerHeight: height,
                 containerPositionY: py,
+            });
+
+            this.containerScrollRef._innerViewRef.measure((a, b, width, height, px, py) => {
+                this.setState({
+                    containerHeight: Math.min(height, containerHeight),
+                });
             });
         });
     }
